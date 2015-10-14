@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour {
 	public GameObject terrainObj;
 	private TextureGenerator terrain;
 
-	private static float maxCameraSize = 3.5f;
+	private static float maxCameraSize = 2f;
 	private static float minCameraSize = 0.2f;
 	private float cameraSize{
 		get{return mainCamera.orthographicSize;}
@@ -23,18 +23,26 @@ public class CameraController : MonoBehaviour {
 	private int screenMargin;
 	private float zoomSpeed = 1f;
 
-	private float limit{
-		get{return 0.5f * TextureGenerator.terrainSize - cameraSize;}
+	private float limit
+    {
+		get { return 0.5f * TextureGenerator.terrainSize - cameraSize;}
 	}  //This is dynamically changed by camera size!
+    private float hlimit
+    {
+        get {
+            float l = 0.5f * TextureGenerator.terrainSize - cameraSize * Screen.width / Screen.height;
+            return l > 0 ? l : 0;
+        }
+    }
 
 	private void constrainCameraPosition(){
 		float x = mainCamera.transform.position.x;
 		float y = mainCamera.transform.position.y;
-        Debug.Log("In Constrain with limit: " + limit + " and x y: " + x + " " + y);
-        if (x > limit)
-			x = limit;
-		if (x < -limit)
-			x = -limit;
+        //Debug.Log("In Constrain with limit: " + limit + " and x y: " + x + " " + y);
+        if (x > hlimit)
+			x = hlimit;
+		if (x < -hlimit)
+			x = -hlimit;
 		if (y > limit)
 			y = limit;
 		if (y < -limit)
@@ -59,7 +67,6 @@ public class CameraController : MonoBehaviour {
 		//check rollers for zoom-in and zoom-out
 		float scrollSpeed = baseScrollSpeed * Mathf.Sqrt (cameraSize / minCameraSize);
 		Vector3 newPosition = this.transform.position;
-		Vector3 oldPosition = this.transform.position;
 		if (Input.mousePosition.x < screenMargin || Input.mousePosition.x > Screen.width - screenMargin)
 			newPosition += new Vector3 (Mathf.Sign (Input.mousePosition.x*1f - screenMargin) * scrollSpeed * Time.fixedDeltaTime, 0, 0);
 		if (Input.mousePosition.y < screenMargin || Input.mousePosition.y > Screen.height - screenMargin)
