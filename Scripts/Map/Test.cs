@@ -10,10 +10,12 @@ public class Test : MonoBehaviour {
 
         ///******** Testing For Sprite Displays ********
         Faction f = new Faction();
-        f.initialize("A Faction", Color.blue);
+        f.initialize("A Faction", Color.black);
         TroopInfo t = this.gameObject.AddComponent<TroopInfo>();
-        t.initialize(TroopInfo.TroopType.Crossbowman, 500, TroopInfo.TroopRank.Normal, f);
-        GameObject troopObj = Troop.instantiate(t, new Vector3(0, 0, -4));
+        t.initialize(TroopInfo.TroopType.Lancer, 500, TroopInfo.TroopRank.Normal, f);
+
+        GameObject troopObj = Troop.instantiate(t, new Vector2(0, 0));
+        troopObj.GetComponent<Troop>().troop_stat.status = TroopStats.TroopStatus.Rout;
     }
 	
 	// Update is called once per frame

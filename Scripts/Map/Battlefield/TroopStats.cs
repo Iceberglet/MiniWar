@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class TroopStats : TroopInfo {
-    public enum Status { Stationary, Advance, Double_time, Charge, Attacking, Melee_fight, Rout };   //Attacking for ranged troops remains ranged 
+    public enum TroopStatus { Stationary, Advance, Double_time, Charge, Attacking, Melee_fight, Rout };   //Attacking for ranged troops remains ranged 
 
     //********* Private Data ******
     protected float stamina;  //between 0 to stamina_max;
@@ -11,10 +11,13 @@ public class TroopStats : TroopInfo {
     {
         get { return (stamina_threshold + MAX_STAT) / 2; }
     }
-    
+    public TroopStatus status;
+
     //********* Public Accessors ******
     public float Stamina { get { return stamina; } }
-    
+    public TroopStatus Status { get { return status; } }
+
+
     public void initialize(TroopInfo troopInfo)
     {
         stamina = MAX_STAT;
