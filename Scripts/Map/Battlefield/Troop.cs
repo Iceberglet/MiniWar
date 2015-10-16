@@ -19,10 +19,15 @@ public class Troop : MonoBehaviour {
     {
         // Initialize GameObject
         GameObject g = new GameObject(troopInfo.Faction.Name.ToString() + " " + troopInfo.Type.ToString());
+        g.tag = "Unit";
         g.transform.position = new Vector3(position.x, position.y, BattleFieldManager.troopHeight);
-        g.AddComponent<CircleCollider2D>();
-        g.GetComponent<CircleCollider2D>().radius = 3f;
+        g.AddComponent<CircleCollider2D>().radius = 2f;  //This is for making hovering highlight happen
 
+        /* Selection Process is gonna be done by bounding box check at BattleFieldManager level
+        g.AddComponent<CircleCollider2D>().isTrigger = true;
+        g.GetComponent<CircleCollider2D>().radius = 2f;
+        g.AddComponent<Rigidbody2D>().gravityScale = 0f;
+        */
         Troop t = g.AddComponent<Troop>();
         t.direction = new Vector2(1, 1);
 
@@ -46,20 +51,18 @@ public class Troop : MonoBehaviour {
 	
 	}
 
-    void OnCollisionEnter2D(Collision2D coll)
+    public void highLight(bool flag)
     {
-        if(coll.gameObject.tag == "GameController")
-            Debug.Log("You box touched me! My Name is: "+this.Name);
-       
+        this.troop_graphic.setHighLight(flag);
     }
 
     void OnMouseEnter()
     {
-        this.troop_graphic.setHighLight(true);
+        highLight(true);
     }
 
     void OnMouseExit()
     {
-        this.troop_graphic.setHighLight(false);
+        highLight(false);
     }
 }

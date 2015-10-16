@@ -15,6 +15,8 @@ public class Test : MonoBehaviour {
         t.initialize(TroopInfo.TroopType.Lancer, 500, TroopInfo.TroopRank.Normal, f);
 
         GameObject troopObj = Troop.instantiate(t, new Vector2(0, 0));
+        Troop.instantiate(t, new Vector2(1, 0));
+        Troop.instantiate(t, new Vector2(1, 1));
         troopObj.GetComponent<Troop>().troop_stat.status = TroopStats.TroopStatus.Rout;
     }
 	
