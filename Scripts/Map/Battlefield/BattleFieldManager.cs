@@ -11,9 +11,9 @@ using System.Collections.Generic;
 public class BattleFieldManager : MonoBehaviour {
 
     //Data Storage
-    private static int speed;        //From 0 to 3, under player control
-    private Troop[] troopList_1;
-    private Troop[] troopList_2;
+    private static int speed = 1;        //From 0 to 3, under player control
+    private TroopOnField[] troopList_1;
+    private TroopOnField[] troopList_2;
 
     //Heights
     public const float troopHeight = -3f;
@@ -28,7 +28,7 @@ public class BattleFieldManager : MonoBehaviour {
     public Texture2D boxTexture;
     private bool isDragging;
     private GameObject selectionBox;
-    private List<Troop> selectedTroops;
+    private List<TroopOnField> selectedTroops;
 
     //Accessible Variables
     public static float deltaTime    // accessible to all troops
@@ -39,7 +39,7 @@ public class BattleFieldManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         selectionBox = null;
-        selectedTroops = new List<Troop>();
+        selectedTroops = new List<TroopOnField>();
         customStyle = new GUIStyle();
         customStyle.normal.background = boxTexture;
         customStyle.border.bottom = customStyle.border.top = customStyle.border.left = customStyle.border.right = 3;
@@ -48,6 +48,43 @@ public class BattleFieldManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        if (treatLeftClick())
+            return;
+        if (treatRightClick())
+            return;
+    }
+
+    bool treatRightClick()
+    {
+        //**********  Command Right Click **********
+        if (Input.GetMouseButtonUp(1))
+        {
+            if (selectedTroops.Count == 0)
+                return false;
+            Vector3 clickPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
+            clickPos.z = troopHeight;
+            Target t = null;
+            foreach (GameObject g in GameObject.FindGameObjectsWithTag("Unit"))
+            {
+                if (Vector3.Distance(g.transform.position, clickPos) < TroopOnField.colliderSize* TroopOnField.scale)
+                {
+                    t = new Target(true, g.transform.position, g.GetComponent<Troop>());
+                    break;
+                }
+            }
+            if(t == null)
+                t = new Target(false, clickPos);
+            foreach (TroopOnField troop in selectedTroops)
+            {
+                troop.setTarget(t);
+            }
+            Debug.Log("Target taken for " + selectedTroops.Count + " troops towards initialPos " + t.targetPos);
+        }
+        return false;
+    }
+
+    bool treatLeftClick()
+    {
         //******* Selection/Command *********
         // Use Left Mouse For Selection/Drag Box
         // Use Right Mouse For Movement
@@ -60,8 +97,9 @@ public class BattleFieldManager : MonoBehaviour {
             boxStartWorld = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
             boxStartWorld.z = troopHeight;  //This is legit only because our camera is always facing in positive z direction :D
             //Debug.Log("Mouse Down! at pos: " + Input.mousePosition + ", resulting boxStart Point: " + boxStart);
+            return true;
         }
-        if (Input.GetMouseButton(0))
+        else if (Input.GetMouseButton(0))
         {
             isDragging = true;
             boxEndScreen = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -80,24 +118,42 @@ public class BattleFieldManager : MonoBehaviour {
             {
                 if (selectionBox.GetComponent<BoxCollider2D>().OverlapPoint(g.transform.position))
                 {
-                    g.GetComponent<Troop>().highLight(true);
-                    selectedTroops.Add(g.GetComponent<Troop>());
+                    g.GetComponent<TroopOnField>().highLight(true);
+                    selectedTroops.Add(g.GetComponent<TroopOnField>());
                 }
             }
             //Debug.Log("Box at: " + selectionBox.transform.position +" of size "+ selectionBox.GetComponent<BoxCollider2D>().size);
+            return true;
         }
-        if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0))
         {
             isDragging = false;
             //Debug.Log("Mouse Up! at pos: " + Input.mousePosition + ", resulting boxEnd Point: " + boxEnd);
             Destroy(selectionBox);
             //Debug.Log("You have selected: " + selectedTroops.Count + " troops");
+
+            //TODO: If SelectionBox does not detect anything, CHECK IF CLICKED ON COLLIDER OF ANY TROOP
+            if (selectedTroops.Count == 0)
+            {
+                Vector2 pos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
+                foreach (GameObject g in GameObject.FindGameObjectsWithTag("Unit"))
+                {
+                    if (g.GetComponent<CircleCollider2D>().OverlapPoint(pos))
+                    {
+                        g.GetComponent<TroopOnField>().highLight(true);
+                        selectedTroops.Add(g.GetComponent<TroopOnField>());
+                        break;
+                    }
+                }
+            }
+            return true;
         }
+        return false;
     }
 
     void clearSelected()
     {
-        foreach (Troop t in selectedTroops)
+        foreach (TroopOnField t in selectedTroops)
             t.highLight(false);
         selectedTroops.Clear();
     }

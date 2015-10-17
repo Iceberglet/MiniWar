@@ -3,24 +3,26 @@ using System.Collections;
 
 public class Test : MonoBehaviour {
 	private TextureGenerator terrain;
-
-	// Use this for initialization
+    
 	void Start () {
 		terrain = this.gameObject.GetComponent<TextureGenerator> ();
 
         ///******** Testing For Sprite Displays ********
         Faction f = new Faction();
         f.initialize("A Faction", Color.black);
-        TroopInfo t = this.gameObject.AddComponent<TroopInfo>();
-        t.initialize(TroopInfo.TroopType.Lancer, 500, TroopInfo.TroopRank.Normal, f);
 
-        GameObject troopObj = Troop.instantiate(t, new Vector2(0, 0));
-        Troop.instantiate(t, new Vector2(1, 0));
-        Troop.instantiate(t, new Vector2(1, 1));
-        troopObj.GetComponent<Troop>().troop_stat.status = TroopStats.TroopStatus.Rout;
+        Reader r = new Reader();
+        Troop t = this.gameObject.AddComponent<Troop>();
+        TroopType tt = Reader.getTroopType("cavalry_heavy");
+        tt.faction = f;
+        t.initialize(tt, 500);
+
+        GameObject troopObj = TroopOnField.instantiate(t, new Vector2(0, 0), this.gameObject);
+        TroopOnField.instantiate(t, new Vector2(1, 0), this.gameObject);
+        TroopOnField.instantiate(t, new Vector2(1, 1), this.gameObject);
+        troopObj.GetComponent<TroopOnField>().troop_stat.status = TroopStats.TroopStatus.Rout;
     }
 	
-	// Update is called once per frame
 	void Update () {
         /******* Dynamic Height Detector *******
 		//Debug.Log ("Camera Height: " + Camera.main.pixelHeight);

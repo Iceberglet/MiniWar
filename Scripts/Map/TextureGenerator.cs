@@ -30,7 +30,7 @@ public class TextureGenerator : MonoBehaviour {
 		while (initialSize >= 2) {
 			divide(initialSize);
 			initialSize/=2;
-			Debug.Log ("Terrain Generation Iteration Count: "+count);
+			//Debug.Log ("Terrain Generation Iteration Count: "+count);
 			count++;
 			yield return null;
 		}
@@ -68,7 +68,7 @@ public class TextureGenerator : MonoBehaviour {
 		byte[] b = (byte[])heightmap.EncodeToPNG ();
 		//Debug.Log (Application.persistentDataPath);
 		File.WriteAllBytes("D:/" + "new_texture_" + b.GetHashCode() + ".png", b);
-		Debug.Log ("Done With Height Map Generation!");
+		//Debug.Log ("Done With Height Map Generation!");
 	}
 	
     //Method to subdivide terrain and raise/lower vertices situated *size* distance apart

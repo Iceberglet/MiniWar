@@ -13,7 +13,7 @@ public class TroopGraphic : MonoBehaviour {
     //need only rotate z, and it is counter-clockwise
 
     private TroopStats troop_stat { get { return this.GetComponent<TroopStats>(); } }
-    private Troop troop { get { return this.GetComponent<Troop>(); } }
+    private TroopOnField troop { get { return this.GetComponent<TroopOnField>(); } }
 
     private int number { get { return troop_stat.Number; } }   //Used to change the 1. outer aura size and color 2. Collider size?
     private Color factionColor { get { return troop_stat.Faction.Color; } }
@@ -24,20 +24,19 @@ public class TroopGraphic : MonoBehaviour {
     private Color blinkColor = Color.white;
 
     public void initialize(TroopStats troopStat)
-    {
-        int type = (int)troopStat.Type;
+    {/*
         Sprite top;
         Sprite middle;
         Sprite advance;
         Sprite bottom_normal;
         Sprite bottom_highlight;
-        Data_Manager.ObtainTroopSprite(type, out top, out middle, out bottom_normal, out bottom_highlight, out advance);
-        //TODO: create four gameObjects for the sprites
-        attachIcon(top, ref icon_top, 3);
-        attachIcon(middle, ref icon_middle, 2);
-        attachIcon(bottom_normal, ref icon_bottom, 1);
-        attachIcon(advance, ref icon_advance, 4);
-        attachIcon(bottom_highlight, ref icon_highlight, 0);
+        Data_Manager.ObtainTroopSprite(type, out top, out middle, out bottom_normal, out bottom_highlight, out advance);*/
+
+        attachIcon(troopStat.Type.icon_top, ref icon_top, 3);
+        attachIcon(troopStat.Type.icon_main, ref icon_middle, 2);
+        attachIcon(troopStat.Type.icon_bottom, ref icon_bottom, 1);
+        attachIcon(troopStat.Type.icon_advance, ref icon_advance, 4);
+        attachIcon(troopStat.Type.icon_bottom_highlight, ref icon_highlight, 0);
         icon_bottom.GetComponent<SpriteRenderer>().color = factionColor;
         icon_advance.GetComponent<SpriteRenderer>().color = factionColor;
         setHighLight(false);
@@ -56,9 +55,15 @@ public class TroopGraphic : MonoBehaviour {
     public void setHighLight(bool flag)
     {
         if (flag)
+        {
             icon_highlight.SetActive(true);
+            icon_advance.GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
         else
+        {
             icon_highlight.SetActive(false);
+            icon_advance.GetComponent<SpriteRenderer>().color = factionColor;
+        }
     }
 
 	// Use this for initialization
@@ -80,14 +85,14 @@ public class TroopGraphic : MonoBehaviour {
             blink = 0f;
         switch(troop_stat.Status)
         {
-            case TroopStats.TroopStatus.Attacking:
-            case TroopStats.TroopStatus.Melee_fight:
+            case TroopStats.TroopStatus.RangedAttack:
+            case TroopStats.TroopStatus.Melee:
                 blinkColor = Color.yellow;
                 break;
             case TroopStats.TroopStatus.Rout:
                 blinkColor = Color.red;
                 break;
-            case TroopStats.TroopStatus.Double_time:
+            case TroopStats.TroopStatus.Marching:
                 blinkColor = Color.blue;
                 break;
             default:

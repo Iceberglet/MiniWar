@@ -5,5 +5,5 @@ using System.Text;
 
 public class Army
 {
-    public List<TroopInfo> armyTroops;
+    public List<Troop> armyTroops;
 }

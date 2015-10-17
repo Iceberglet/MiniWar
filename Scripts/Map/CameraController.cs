@@ -23,11 +23,11 @@ public class CameraController : MonoBehaviour {
 	private int screenMargin;
 	private float zoomSpeed = 1f;
 
-	private float limit
+	private float limit   //Vertical Limit
     {
 		get { return 0.5f * TextureGenerator.terrainSize - cameraSize;}
 	}  //This is dynamically changed by camera size!
-    private float hlimit
+    private float hlimit  //Horizontal Limit
     {
         get {
             float l = 0.5f * TextureGenerator.terrainSize - cameraSize * Screen.width / Screen.height;
