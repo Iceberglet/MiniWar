@@ -5,7 +5,7 @@ using System.IO;
 public class TextureGenerator : MonoBehaviour {
 
 	private Texture2D heightmap;
-	private static int startSize = 64;
+	private static int startSize = 128;
 	private static int heightmapSize = 513;
 	private static float roughness = 1f;
 	private float[,] bitMap;
@@ -20,7 +20,10 @@ public class TextureGenerator : MonoBehaviour {
         for (int xx = 0; xx < heightmapSize; ++xx)
             for (int yy = 0; yy < heightmapSize; ++yy)
             {
-                bitMap[xx, yy] = 0;
+				if(xx == 0 || yy == 0)
+					bitMap[xx, yy] = roughness*startSize;
+                else 
+					bitMap[xx, yy] = 0;
             }
     }
 
