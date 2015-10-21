@@ -76,7 +76,7 @@ public class TroopGraphic : MonoBehaviour {
         //Rotate the Frontier All The Time
         if (icon_advance != null)
         {
-            icon_advance.transform.rotation = Quaternion.Euler(0, 0, 180/Mathf.PI*Mathf.Atan2(-troop.Direction.x, troop.Direction.y));
+            icon_advance.transform.rotation = Quaternion.Euler(0, 0, 180/Mathf.PI*Mathf.Atan2(-troop.direction.x, troop.direction.y));
         }
 
         //Blink Yellow if Status in fight, blink Red if Status is rout

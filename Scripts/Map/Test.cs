@@ -18,8 +18,8 @@ public class Test : MonoBehaviour {
         t.initialize(tt, 500);
 
         GameObject troopObj = TroopOnField.instantiate(t, new Vector2(0, 0), this.gameObject);
-        TroopOnField.instantiate(t, new Vector2(1, 0), this.gameObject);
-        TroopOnField.instantiate(t, new Vector2(1, 1), this.gameObject);
+        //TroopOnField.instantiate(t, new Vector2(1, 0), this.gameObject);
+        //TroopOnField.instantiate(t, new Vector2(1, 1), this.gameObject);
         troopObj.GetComponent<TroopOnField>().troop_stat.status = TroopStats.TroopStatus.Rout;
     }
 	

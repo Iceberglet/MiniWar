@@ -12,8 +12,8 @@ public class BattleFieldManager : MonoBehaviour {
 
     //Data Storage
     private static int speed = 1;        //From 0 to 3, under player control
-    private TroopOnField[] troopList_1;
-    private TroopOnField[] troopList_2;
+    //private TroopOnField[] troopList_1;
+    //private TroopOnField[] troopList_2;
 
     //Heights
     public const float troopHeight = -3f;
@@ -28,7 +28,7 @@ public class BattleFieldManager : MonoBehaviour {
     public Texture2D boxTexture;
     private bool isDragging;
     private GameObject selectionBox;
-    private List<TroopOnField> selectedTroops;
+    private static List<TroopOnField> selectedTroops;
 
     //Accessible Variables
     public static float deltaTime    // accessible to all troops
@@ -54,6 +54,7 @@ public class BattleFieldManager : MonoBehaviour {
             return;
     }
 
+    //Returns true on successful treatment with commands
     bool treatRightClick()
     {
         //**********  Command Right Click **********
@@ -64,21 +65,31 @@ public class BattleFieldManager : MonoBehaviour {
             Vector3 clickPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0));
             clickPos.z = troopHeight;
             Target t = null;
+            //Targeting a troop?
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("Unit"))
             {
+                // Check if click pos falls onto this gameObject
                 if (Vector3.Distance(g.transform.position, clickPos) < TroopOnField.colliderSize* TroopOnField.scale)
-                {
-                    t = new Target(true, g.transform.position, g.GetComponent<Troop>());
+                {                
+                    // Check we are not clicking on ourselves
+                    if (selectedTroops.Contains(g.GetComponent<TroopOnField>()))
+                    {
+                        Debug.Log("Clicked on one of your troop! returning");
+                        return false;
+                    }
+                    t = new Target(true, g.transform.position, g.GetComponent<TroopOnField>());
                     break;
                 }
             }
+            //Targeting just a place?
             if(t == null)
                 t = new Target(false, clickPos);
             foreach (TroopOnField troop in selectedTroops)
             {
-                troop.setTarget(t);
+                troop.target = t;
             }
             Debug.Log("Target taken for " + selectedTroops.Count + " troops towards initialPos " + t.targetPos);
+            return true;
         }
         return false;
     }
@@ -114,13 +125,11 @@ public class BattleFieldManager : MonoBehaviour {
             selectionBox.GetComponent<BoxCollider2D>().size = new Vector2(Mathf.Abs(boxStartWorld.x - boxEndWorld.x), Mathf.Abs(boxStartWorld.y - boxEndWorld.y));
             //Debug.Log("You Are Holding Mouse! Start at " + boxStartScreen + " end " +boxEndScreen);
             clearSelected();
+            //Adding selected and highlight them
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("Unit"))
             {
                 if (selectionBox.GetComponent<BoxCollider2D>().OverlapPoint(g.transform.position))
-                {
-                    g.GetComponent<TroopOnField>().highLight(true);
-                    selectedTroops.Add(g.GetComponent<TroopOnField>());
-                }
+                    addToSelection(g);
             }
             //Debug.Log("Box at: " + selectionBox.transform.position +" of size "+ selectionBox.GetComponent<BoxCollider2D>().size);
             return true;
@@ -140,8 +149,7 @@ public class BattleFieldManager : MonoBehaviour {
                 {
                     if (g.GetComponent<CircleCollider2D>().OverlapPoint(pos))
                     {
-                        g.GetComponent<TroopOnField>().highLight(true);
-                        selectedTroops.Add(g.GetComponent<TroopOnField>());
+                        addToSelection(g);
                         break;
                     }
                 }
@@ -151,10 +159,21 @@ public class BattleFieldManager : MonoBehaviour {
         return false;
     }
 
+    void addToSelection(GameObject g)
+    {
+        TroopOnField t = g.GetComponent<TroopOnField>();
+        t.highLight(true);
+        t.ignoreMouse = true;
+        selectedTroops.Add(t);
+    }
+
     void clearSelected()
     {
         foreach (TroopOnField t in selectedTroops)
+        {
             t.highLight(false);
+            t.ignoreMouse = false;
+        }
         selectedTroops.Clear();
     }
 

@@ -6,8 +6,13 @@ using UnityEngine;
 
 public class Target
 {
-    private bool isTroop;
-    private Troop troop;
+    //if target is a troop or stationary pos
+    public readonly bool isTroop;
+    //the troop if isTroop == true
+    public readonly TroopOnField troop;
+    public readonly bool doubleTime;
+
+    //The initial position of the target
     private Vector3 initialPos;
     public Vector3 targetPos
     {
@@ -19,9 +24,10 @@ public class Target
         }
     }
 
-    public Target(bool isTroopFlag, Vector3 initialPosition, Troop t = null)
+    public Target(bool isTroopFlag, Vector3 initialPosition, bool flagDoubleTime = false, TroopOnField t = null)
     {
         isTroop = isTroopFlag;
+        doubleTime = flagDoubleTime;   //TODO: implement detection of doubletime
         initialPos = initialPosition;
         troop = t;
     }

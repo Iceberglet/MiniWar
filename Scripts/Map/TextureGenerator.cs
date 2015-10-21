@@ -5,10 +5,10 @@ using System.IO;
 public class TextureGenerator : MonoBehaviour {
 
 	private Texture2D heightmap;
-	private static int startSize = 128;
-	private static int heightmapSize = 513;
+	private static int startSize = 128;      //The grid size that you start to do algorithm
+	private static int heightmapSize = 513;  //The size of the 2D array
 	private static float roughness = 1f;
-	private float[,] bitMap;
+	private float[,] bitMap;                 //The 2D array
 	public static float terrainSize = 10f;   //By Default
 
     private void initializeTerrainParameters()
@@ -20,10 +20,11 @@ public class TextureGenerator : MonoBehaviour {
         for (int xx = 0; xx < heightmapSize; ++xx)
             for (int yy = 0; yy < heightmapSize; ++yy)
             {
+				/*** You Can Choose To Initialize Start Grid HERE
 				if(xx == 0 || yy == 0)
 					bitMap[xx, yy] = roughness*startSize;
-                else 
-					bitMap[xx, yy] = 0;
+                else */
+				bitMap[xx, yy] = 0;
             }
     }
 
@@ -58,15 +59,6 @@ public class TextureGenerator : MonoBehaviour {
 				newColor = new Color(depth, 1,0);
 			heightmap.SetPixel(xx,yy,newColor);
 		}
-		/*	Testing for x and y axis
-		for (int xx = 0; xx < heightmapSize; ++xx) {
-			heightmap.SetPixel(xx,0,Color.red);
-			heightmap.SetPixel(xx,1,Color.red);
-			heightmap.SetPixel(0,xx,Color.black);
-			heightmap.SetPixel(1,xx,Color.black);
-		}*/
-
-
 		heightmap.Apply();
 		byte[] b = (byte[])heightmap.EncodeToPNG ();
 		//Debug.Log (Application.persistentDataPath);
@@ -131,11 +123,11 @@ public class TextureGenerator : MonoBehaviour {
 			}
 		}
 	}
-
+	/*
     // a substitute for Color constructor
 	private Color rgb(int r, int g, int b){
 		return new Color (1f*r/255, 1f*g/255, 1f*b/255);
-	}
+	}*/
 
 	//******************* Public Functions *****************
 	// By Default, terrain size is 10*10, also heightmapSize*heightmapSize
